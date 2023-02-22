@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}{{ item.name }}{% endblock %}
+
+{% block content %}
+    <div class="grid grid-cols-5 gap-6 ">
+        <div class="col-span-3">
+            <img src="{{ item.image.url}}" alt="{{ item.name }}" class="rounded-xl">
+        </div>
+        <div class="col-span-2 p-6 bg-gray-100 rounded-xl">
+            <h2 class="text-2xl">{{item.name}}</h2>
+            <p class="text-gray-500"> <strong>Price</strong>: GHS {{ item.price|floatformat:"2" }}</p>
+            <p class="text-gray-500 text-sm"> <strong>Seller:</strong> {{ item.created_by.username }}</p>
+
+            {% if item.description %}
+                <p class="text-gray-700 text-sm"> <strong class="text-gray-700">Descritpion:</strong> <br> {{ item.description }}</p>
+            {% endif %}
+
+            {% if request.user == item.created_by %}
+                <div class="mt-6 p-6 bg-white rounded-xl">
+                    <p>Your product</p>
+                    <a href="{% url 'items:update' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-blue-500 text-white rounded-xl hover:bg-blue-700">Update</a>
+                    <a href="{% url 'items:delete' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl hover:bg-red-700">Delete</a>
+                </div>
+            {% else %}
+                <a href="{% url 'conversation:new' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Contact seller</a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="mt-6 px-6 py-12 bg-gray-100 rounded-xl">
+        <h2 class="mb-12 text-2xl text-center">Related items</h2>
+
+        <div class="grid grid-cols-3 gap-3">
+            {% for related_item in related_items %}
+            <div>
+                <a href="{% url 'items:detail' related_item.id %}">
+                    <div>
+                        <img src="{{ related_item.image.url }}" alt="{{ related_item.name }}" class="rounded-t-xl object-contain h-48 w-100">
+                    </div>
+
+                    <div class="p-6 bg-white rounded-b-xl">
+                        <h2 class="text-2xl">{{ related_item.name }}</h2>
+                    </div>
+                </a>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
